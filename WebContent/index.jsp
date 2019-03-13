@@ -1,16 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <title>Login</title>
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker.min.css">
-  </head>
-  <body>
+<%@ include file="header.jsp" %>
+<%
+    session=request.getSession(false);
+    if(session.getAttribute("userDetails")!=null)
+    {
+        response.sendRedirect("AdminDataServlet");
+    }
+
+%>
+
     <div class="container">	
       <form name="myform" class="form-horizontal" action="LoginServlet" method="post">
         <fieldset>
@@ -55,7 +52,8 @@
               <%=(request.getAttribute("error") == null) ? "" : request.getAttribute("error")%>
               <br>
               	New User?? <a href="RegistrationServlet"> Click Here </a>
-				
+			<br>
+              	Forgot Password ??? <a href="forgot.jsp"> Click Here </a>
               </div>
             </div>
             <div class="col-md-4">
@@ -76,11 +74,4 @@
       </form>
     </div>
   <!-- /.container -->
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="js/login.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script language="javascript" src="https://momentjs.com/downloads/moment.js"></script>
-
-  </body>
-</html>
+<%@ include file="footer.jsp" %>

@@ -1,49 +1,35 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1" import="com.model.UserModel"%>
-
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
-
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-	<c:choose>
-		<c:when test="${sessionScope.userDetails.userId ne null}">
-			<title> Update Form </title>
-		</c:when>
-		<c:otherwise>
-			<title> Registration Form </title>
-		</c:otherwise>
-	</c:choose>
-	
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/style.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/css/bootstrap-datetimepicker.min.css">
-  </head>
-  <body>
+  <%@ include file="header.jsp" %>
   		<c:forEach items="${data}" var="data">
     <div class="container">
-			<form name="myform" class="form-horizontal"
-				action="RegistrationServlet" method="post">
-				<fieldset>
+
+		<div class="row">
+			<div class="head">
+				<div class="col-md-4">
+					<h1></h1>
+				</div>
+				<div class="col-md-4">
 					<c:choose>
 						<c:when test="${sessionScope.userDetails.userId ne null}">
-
-
-							<h1 align="center">Update Form</h1>
+							<h1 align="center">${data.firstName}'s Details</h1>
 						</c:when>
 						<c:otherwise>
 							<h1 align="center">Registration Form</h1>
 						</c:otherwise>
 					</c:choose>
+				</div>
+				<div class="col-md-4 logout">
+	
+				</div>
+			</div>
+		</div>
 
 
 
-					<br>
-					<br>
+					
+			<form name="myform" enctype='multipart/form-data' class="form-horizontal" 
+			 action="RegistrationServlet" method="post">
+				<fieldset>
+				<br>
 					<!-- Text input-->
 
 					<div class="form-group">
@@ -54,7 +40,10 @@
 									class="glyphicon glyphicon-user"></i></span> <input type="text"
 									name="firstName" value="${data.firstName}" id="firstname"
 									class="form-control" placeholder="First Name"
-									onblur="validateFname()">
+									onblur="validateFname()"
+									oninput="maxLengthCheck(this)"
+									maxlength = "45"
+									onkeypress="return preventNumerics(event)">
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -72,7 +61,10 @@
 									class="glyphicon glyphicon-user"></i></span> <input type="text"
 									name="lastName" value="${data.lastName}" id="lastname"
 									class="form-control" placeholder="Last Name"
-									onblur="validateLname()">
+									onblur="validateLname()"
+									oninput="maxLengthCheck(this)"
+									maxlength = "45"
+									onkeypress="return preventNumerics(event)">
 							</div>
 						</div>
 						<div class="col-md-4">
@@ -87,14 +79,14 @@
 						<div class="col-md-4">
 							<div class="input-group datepick">
 								<input type="text" class="form-control"
-									value="${data.dateOfBirth}" name="dateOfBirth" id="birthdate2">
+									value="${data.dateOfBirth}" name="dateOfBirth" id="birthdate" onblur="validateBirthdate()">
 								<div class="input-group-addon">
 									<span class="glyphicon glyphicon-calendar"></span>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-4">
-							<p id="error4"></p>
+							<p id="error2"></p>
 						</div>
 					</div>
 
@@ -107,11 +99,14 @@
 								<span class="input-group-addon"><i
 									class="glyphicon glyphicon-earphone"></i></span> <input type="text"
 									id="phoneno" name="contactNo" value="${data.contactNo}"
-									class="form-control" value="" onblur="validatePhone()">
+									class="form-control" value="" onblur="validatePhone()"
+									oninput="maxLengthCheck(this)"
+									maxlength = "13"
+									onkeypress="return preventAlphabets(event)">
 							</div>
 						</div>
 						<div class="col-md-4">
-							<p id="error5"></p>
+							<p id="error3"></p>
 						</div>
 					</div>
 
@@ -124,15 +119,18 @@
 									class="glyphicon glyphicon-envelope"></i></span> <input type="text"
 									name="emailId" value="${data.emailId}" id="emailid"
 									class="form-control" placeholder="abcd@def.com"
-									onblur="validateEmail()"
+									onblur="validateEmail(),checkemail()"
+									oninput="maxLengthCheck(this)"
+									maxlength = "255"
 									onkeypress="return preventSpace(event)">
 							</div>
 						</div>
 						<div class="col-md-4">
-							<p id="error6"></p>
+							<p id="error4"></p>
 						</div>
 					</div>
 
+<c:if test="${sessionScope.userDetails.userId eq null}">
 					<!-- password input-->
 					<div class="form-group">
 						<label class="col-md-4 control-label">Password *</label>
@@ -144,13 +142,15 @@
 									value="${data.password}" onselectstart="return false"
 									onpaste="return false;" onCopy="return false"
 									onCut="return false" class="form-control"
-									placeholder="password" rel="txtTooltip"
+									placeholder="password" data-placement="right"
+									oninput="maxLengthCheck(this)"
+									maxlength = "45" rel="txtTooltip"
 									title="Password must have 8-12 characters & atleast hve one capital one small one one spacial char and one number."
 									onblur="validatePassword()" onkeyup="validatePassword()">
 							</div>
 						</div>
 						<div class="col-md-4">
-							<p id="error7"></p>
+							<p id="error5"></p>
 						</div>
 					</div>
 
@@ -163,15 +163,18 @@
 									class="glyphicon glyphicon-envelope"></i></span> <input
 									type="password" value="${data.password}"
 									onpaste="return false;" onCopy="return false"
-									onCut="return false" id="confirmpassowrd" class="form-control"
-									placeholder="confirm password" onblur="validateCpassword()"
-									onkeyup="validateCpassword()">
+									onCut="return false" 
+									oninput="maxLengthCheck(this)"
+									maxlength = "45"
+									id="confirmpassowrd" class="form-control"
+									placeholder="confirm password" onblur="validateCpassword()">
 							</div>
 						</div>
 						<div class="col-md-4">
-							<p id="error8"></p>
+							<p id="error6"></p>
 						</div>
 					</div>
+</c:if>
 
 					<!-- radio checks -->
 					<div class="form-group">
@@ -194,7 +197,7 @@ test="${gender=='F'}">checked</c:if>
 							</div>
 						</div>
 						<div class="col-md-4">
-							<p id="error9"></p>
+							<p id="error7"></p>
 						</div>
 					</div>
 
@@ -208,26 +211,26 @@ test="${gender=='F'}">checked</c:if>
 							<div class="input-group">
 								<div class="checkbox">
 									<label><input name="languages" id="en" type="checkbox"
-										value="english" onchange="validateLanguage()"
+										value="english" onblur="validateLanguage()"
 										<c:if test
 ="${fn:contains(language,'english')}">checked</c:if>>English</label>
 								</div>
 								<div class="checkbox">
 									<label><input name="languages" id="hi" type="checkbox"
-										value="hindi" onchange="validateLanguage()"
+										value="hindi" onblur="validateLanguage()"
 										<c:if test
 ="${fn:contains(language,'hindi')}">checked</c:if>>Hindi</label>
 								</div>
 								<div class="checkbox">
 									<label><input id="gj" name="languages" type="checkbox"
-										value="gujarati" onchange="validateLanguage()"
+										value="gujarati" onblur="validateLanguage()"
 										<c:if test
 ="${fn:contains(language,'gujarati')}">checked</c:if>>Gujarati</label>
 								</div>
 							</div>
 						</div>
 						<div class="col-md-4">
-							<p id="error15"></p>
+							<p id="error8"></p>
 						</div>
 					</div>
 					
@@ -236,7 +239,11 @@ test="${gender=='F'}">checked</c:if>
 					
 					
 					
-					
+		<c:set var = "string1" value = "${addressData}"/>
+		 <c:set var = "sectionsLength" value = "${fn:length(string1)}"></c:set>
+
+
+
 					
 		<c:forEach items="${addressData}" var="addressData">	
 		
@@ -251,68 +258,90 @@ test="${gender=='F'}">checked</c:if>
 									<div class="col-md-4">
 										<div class="input-group">
 											<span class="input-group-addon"></span> <input type="text"
-												name="street1" id="street1" class="form-control"
-												placeholder="Street 1" value="${addressData.street1}" onblur="">
+												name="street1" id="street1_${addressData.addressId}" 
+												class="form-control street1Class"
+												placeholder="Street 1" value="${addressData.street1}"
+												oninput="maxLengthCheck(this)"
+												maxlength = "45"
+												onblur="validateStreet1()">
 										</div>
 									</div>
 									<div class="col-md-4">
-										<p></p>
+										<p name="error_street1" id="error_street1_${addressData.addressId}"></p>
 									</div>
 								</div>
+								
 								<div class="form-group">
 									<label class="col-md-4 control-label"></label>
 									<div class="col-md-4">
 										<div class="input-group">
 											<span class="input-group-addon"></span> <input type="text"
-												name="street2" id="street2" class="form-control"
-												placeholder="Street 2" value="${addressData.street2}" onblur="">
+												name="street2" id="street2_${addressData.addressId}" 
+												class="form-control street2Class"
+												placeholder="Street 2" value="${addressData.street2}" 
+												oninput="maxLengthCheck(this)"
+												maxlength = "45"
+												onblur="validateStreet2()">
 										</div>
 									</div>
 									<div class="col-md-4">
-										<p id="error"></p>
+										<p name="error_street2" id="error_street2_${addressData.addressId}"></p>
 									</div>
 								</div>
+								
 								<div class="form-group">
 									<label class="col-md-4 control-label"></label>
 									<div class="col-md-4">
 										<div class="input-group">
 											<span class="input-group-addon"></span> <input type="text"
-												name="city" id="city" class="form-control"
-												placeholder="City" value="${addressData.city}" onblur="">
+												name="city" id="city_${addressData.addressId}" 
+												class="form-control cityClass"
+												placeholder="City" value="${addressData.city}" 
+												oninput="maxLengthCheck(this)"
+												maxlength = "45"
+												onblur="validateCity()"
+												onkeypress="return preventNumerics(event)">
 										</div>
 									</div>
 									<div class="col-md-4">
-										<p id="error"></p>
+										<p name="error_city" id="error_city_${addressData.addressId}"></p>
 									</div>
 								</div>
 
 								<!-- Text input -->
 
 								<div class="form-group">
-									<label class="col-md-4 control-label">Zip Code *</label>
+									<label class="col-md-4 control-label">Pin Code *</label>
 									<div class="col-md-4">
 										<div class="input-group">
 											<span class="input-group-addon"><i
 												class="glyphicon glyphicon-home"></i></span> <input type="text"
-												name="pincode" id="zipcode" class="form-control"
-												placeholder="123456" value="${addressData.pincode}" onblur="validatePin()">
+												name="pincode" id="pincode_${addressData.addressId}" 
+												class="form-control pincodeClass"
+												value="${addressData.pincode}"
+												placeholder="123456"
+												oninput="maxLengthCheck(this)"
+												maxlength = "6"
+												onblur="validatePincode()"
+												onkeypress="return preventAlphabets(event)">
 										</div>
 									</div>
 									<div class="col-md-4">
-										<p id="error10"></p>
+										<p name="error_pincode" id="error_pincode_${addressData.addressId}"></p>
 									</div>
 								</div>
 
 								<!-- Select Basic -->
 
 								<div class="form-group">
-									<label class="col-md-4 control-label">State</label>
+									<label class="col-md-4 control-label">State *</label>
 									<c:set var="state" value="${addressData.state}"></c:set>
 									<div class="col-md-4">
 										<div class="input-group">
 											<span class="input-group-addon"><i
 												class="glyphicon glyphicon-list"></i></span> <select name="state"
-												id="state" class="form-control selectpicker">
+												id="state_${addressData.addressId}" class="form-control selectpicker stateClass"
+												onblur="validateState()">
 												<option value="">Please select your state</option>
 												<option value="gujarat" <c:if test
 ="${fn:contains(state,'gujarat')}">selected</c:if>>Gujarat</option>
@@ -321,18 +350,23 @@ test="${gender=='F'}">checked</c:if>
 											</select>
 										</div>
 									</div>
+									<div class="col-md-4">
+										<p name="error_state" id="error_state_${addressData.addressId}"></p>
+									</div>
 								</div>
 								
 								<!--   Select Basic -->
 
 								<div class="form-group">
-									<label class="col-md-4 control-label">Country</label>
+									<label class="col-md-4 control-label">Country *</label>
 									<c:set var="country" value="${addressData.country}"></c:set>
 									<div class="col-md-4">
 										<div class="input-group">
 											<span class="input-group-addon"><i
 												class="glyphicon glyphicon-list"></i></span> <select name="country"
-												id="country" class="form-control selectpicker">
+												id="country_${addressData.addressId}" 
+												class="form-control selectpicker countryClass"
+												onblur="validateCountry()">
 												<option value="">Please select your country</option>
 												<option value="india" <c:if test
 ="${fn:contains(country,'india')}">selected</c:if>>India</option>
@@ -342,7 +376,7 @@ test="${gender=='F'}">checked</c:if>
 										</div>
 									</div>
 									<div class="col-md-4">
-										<p id="error10"></p>
+										<p name="error_country" id="error_country_${addressData.addressId}"></p>
 									</div>
 								</div>
 
@@ -368,18 +402,39 @@ test="${gender=='F'}">checked</c:if>
 								Address</button>
 						</div>
 					</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-					
+
+
+
+<c:forEach items="${imageData}" var="id">
+		<input type="hidden" name="imageId" value="${id.imageId}">
+					<div class="form-group">
+						<label class="col-md-4 control-label">Upload Image *</label>
+
+						<div class="col-md-4">
+							<div class="input-group">
+								<input type="file" name="image" id="file" onblur="validateImage(),validateSubmit()">
+								<output id="result"><c:if test="${sessionScope.userDetails.userId ne null}">
+								<img class="thumbnail" src="data:image/jpg;base64,${id.imageString}"/>
+								</c:if>
+								</output>
+							</div>
+						</div>
+						<div class="col-md-4">
+							<small id="fileValidate" class="upload"></small>
+							<p id="error9"></p>
+						</div>
+					</div>
+					</c:forEach>
+
+
+
+
+
+
+
+
+
+
 					<c:choose>
 						<c:when test="${sessionScope.userDetails.userId ne null}">
 					<!-- Button -->
@@ -388,8 +443,9 @@ test="${gender=='F'}">checked</c:if>
 								<div class="col-md-4">
 
 									<input type="hidden" name="userId" value="${data.userId}" />
-									<button type="submit" name="btnValue" value="update"
-										id="submit" class="btn btn-warning">Update</button>
+									
+									<button type="submit" name="btnValue" onclick="return validateForm(event);" value="update"
+										id="submit" class="btn btn-primary">Update</button>
 									<button type="submit" name="btnValue" value="retrieveData"
 										class="btn btn-default">Cancel</button>
 								</div>
@@ -402,7 +458,7 @@ test="${gender=='F'}">checked</c:if>
 									<div class="input-group">
 										<div class="checkbox">
 											<label><input id="condition" type="checkbox"
-												onclick="validateCheck()" value="english">Accept all
+												onclick="validateCheckbox()">Accept all
 												terms and conditions</label>
 										</div>
 									</div>
@@ -413,14 +469,15 @@ test="${gender=='F'}">checked</c:if>
 								<label class="col-md-4"></label>
 								<div class="col-md-4"></div>
 								<div class="col-md-4">
-									<p>Fields with (*) are mendatory to fill</p>
+									<p>Fields with (*) are mandatory to fill</p>
 								</div>
 							</div>
 							<div class="form-group">
 								<label class="col-md-4"></label>
 								<div class="col-md-4">
 									<button type="submit" name="btnValue" value="insert"
-										id="submit" class="btn btn-warning">Submit</button>
+										id="submit" onclick="return validateForm(event);" 
+										class="btn btn-primary" disabled>Submit</button>
 									<button type="reset" class="btn btn-default">Reset</button>
 								</div>
 							</div>
@@ -430,15 +487,13 @@ test="${gender=='F'}">checked</c:if>
 			</form>
 		</div>
   <!-- /.container -->
+</c:forEach>
+<br>
+<br>
+<br>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
-    <script src="js/register.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-	<script src="js/app.js"></script>
-    <script language="javascript" src="https://momentjs.com/downloads/moment.js"></script>
-	<script language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.43/js/bootstrap-datetimepicker.min.js"></script>
+<script type="text/javascript">
+    var str = ${sectionsLength};
+</script>
+<%@ include file="footer.jsp" %>
 
-
-	</c:forEach>
-  </body>
-</html>

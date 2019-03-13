@@ -10,12 +10,13 @@ import com.DBConnection.DatabaseConnection;
 import com.dao.RegisterationDAO;
 import com.model.AddressModel;
 import com.model.AddressModelList;
+import com.model.ImageModel;
 import com.model.UserModel;
 
 public class RegisterationDAOImpl implements RegisterationDAO {
 
 	@Override
-	public int insertData(UserModel um, AddressModelList aml, String sql) {
+	public int insertData(UserModel um, ImageModel im, AddressModelList aml, String sql) {
 		int i=0;
 		try {
 			Connection con = null;
@@ -43,6 +44,7 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 			if(rs.next()) {
 				String userId = rs.getString("userId");
 				insertAddresses(aml,userId);
+				insertImage(im,userId);
 			}
 			
 			con.close();
@@ -53,6 +55,28 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 			e.printStackTrace();
 		}
 		return i;
+	}
+
+	private void insertImage(ImageModel im, String userId) {
+		
+		String sql = "INSERT INTO image VALUES(?,?,?)";
+		
+		try {
+			Connection con = null;
+			con = DatabaseConnection.createConnection();
+			PreparedStatement p = con.prepareStatement(sql);
+			
+			p.setString(1, null);
+			p.setString(2, userId);
+			p.setBlob(3, im.getImage());
+			
+			p.executeUpdate();
+		}
+		catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void insertAddresses(AddressModelList aml, String userId) {
@@ -101,7 +125,6 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 			p.setString(5, um.getGender());
 			p.setString(6, um.getContactNo());
 			p.setString(7, um.getLanguages());
-			p.setString(8, um.getPassword());
 			
 			i=p.executeUpdate();
 
@@ -152,6 +175,24 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
+		return i;
+	}
+
+	@Override
+	public int updateImageData(ImageModel im, String sql) {
+		Connection con = null;
+		con = DatabaseConnection.createConnection();
+		int i=0;
+		try {
+			PreparedStatement p = con.prepareStatement(sql);
+			p.setBlob(1, im.getImage());
+
+			i = p.executeUpdate();
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
 		return i;
 	}
 }

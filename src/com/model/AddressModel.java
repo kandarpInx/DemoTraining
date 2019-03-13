@@ -2,7 +2,7 @@ package com.model;
 
 public class AddressModel {
 	
-	private String addressId;
+	private String addressId="0";
 	private String userId;
 	private String street1;
 	private String street2;
@@ -10,6 +10,7 @@ public class AddressModel {
 	private String city;
 	private String state;
 	private String country;
+	public AddressModel() {}
 	
 	public AddressModel(String addressId, String userId, String street1, String street2, String pincode,
 			 String city,  String state, String country) {

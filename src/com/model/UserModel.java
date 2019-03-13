@@ -3,12 +3,6 @@ package com.model;
 public class UserModel {
 	
 	private String userId;
-	public String getUserId() {
-		return userId;
-	}
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
 	private String firstName;
 	private String lastName;
 	private String dateOfBirth;
@@ -17,7 +11,21 @@ public class UserModel {
 	private String gender;
 	private String contactNo;
 	private String languages;
-
+	private String role;
+	
+	
+	public String getRole() {
+		return role;
+	}
+	public void setRole(String role) {
+		this.role = role;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
 	public String getFirstName() {
 		return firstName;
 	}

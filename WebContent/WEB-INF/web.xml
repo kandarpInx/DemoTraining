@@ -13,9 +13,9 @@
   </servlet-mapping>
   
   
+  
   <error-page>
-  		<!-- Missing login -->
-  		<error-code>500</error-code>
-  		<location>/index.jsp</location>
-	</error-page>
+    <error-code>404</error-code>
+    <location>/index.jsp</location>
+  </error-page>
 </web-app>

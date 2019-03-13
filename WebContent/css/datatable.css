@@ -3,16 +3,14 @@ table{
 }
 #example_filter{
     float:right;
+    color:black;
 }
 #example_paginate{
     float:right;
-}
-label {
-    display: inline-flex;
-    margin-bottom: .5rem;
-    margin-top: .5rem;
 }
 
 .mydatatable{
 	padding-top: 20px;
 }
+
+th, td { text-align: center; }

@@ -1,21 +1,27 @@
 package com.controller;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.Part;
 
 import com.model.AddressModel;
 import com.model.AddressModelList;
+import com.model.ImageModel;
 import com.model.UserModel;
 import com.service.AdminDataService;
 import com.service.RegisterationService;
@@ -26,6 +32,7 @@ import com.service.impl.RegstrationServiceImpl;
  * Servlet implementation class RegistrationServlet
  */
 @WebServlet("/RegistrationServlet")
+@MultipartConfig
 public class RegistrationServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
@@ -40,13 +47,13 @@ public class RegistrationServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+    
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String button = request.getParameter("btnValue");
 		
 		HttpSession session = request.getSession();
-		if(session!=null) {
 		
-			String button = request.getParameter("btnValue");
-			
+		if(session!=null) {
 			AdminDataService ad = new AdminDataServiceImpl();
 			
 			if(button.equals("retrieveData")) {
@@ -65,17 +72,26 @@ public class RegistrationServlet extends HttpServlet {
 					
 					ArrayList<UserModel> data = ad.retriveUserData(id);
 					List<AddressModel> addressData = ad.retriveAddressData(id);
+					List<ImageModel> imageData;
+					try {
+						imageData = ad.retriveImageData(id);
+						request.setAttribute("imageData", imageData);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
 					
 					request.setAttribute("addressData", addressData);
 					request.setAttribute("data", data);
 					request.getRequestDispatcher("/adminData.jsp").forward(request, response);		
 				}
 			}
-			
+
 			if(button.equals("delete")) {
 				String id = request.getParameter("userId");
 				ad.deleteData(id);
-				request.getRequestDispatcher("/home.jsp").forward(request, response);
+				response.sendRedirect(request.getContextPath() + "/AdminDataServlet");
 			}
 			
 			if(button.equals("update1")) {
@@ -83,7 +99,14 @@ public class RegistrationServlet extends HttpServlet {
 				
 				ArrayList<UserModel> data = ad.retriveUserData(id);
 				List<AddressModel> addressData = ad.retriveAddressData(id);
-				
+				List<ImageModel> imageData;
+				try {
+					imageData = ad.retriveImageData(id);
+					request.setAttribute("imageData", imageData);
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				request.setAttribute("addressData", addressData);
 				request.setAttribute("data", data);
 				request.getRequestDispatcher("/register.jsp").forward(request, response);
@@ -98,7 +121,6 @@ public class RegistrationServlet extends HttpServlet {
 				String lastName = request.getParameter("lastName");
 				String dateOfBirth = request.getParameter("dateOfBirth");
 				String emailId = request.getParameter("emailId");
-				String password = request.getParameter("password");
 				String gender = request.getParameter("gender");
 				String contactNo = request.getParameter("contactNo");
 				String languages[] = request.getParameterValues("languages");
@@ -176,91 +198,154 @@ public class RegistrationServlet extends HttpServlet {
 					System.out.println("Delete query on :: " + id);
 				}
 				
-				
-				
-				
 				um.setUserId(userId);
 				um.setFirstName(firstName);
 				um.setLastName(lastName);
 				um.setDateOfBirth(dateOfBirth);
 				um.setEmailId(emailId);
-				um.setPassword(password);
 				um.setGender(gender);
 				um.setContactNo(contactNo);
 				String lang = "";
 				int i = 0;
 				while (i < languages.length) {
-					lang = languages[i] + " " + lang;
+					lang = languages[i] + "," + lang;
 					i++;
 				}
 				um.setLanguages(lang);
 				
 				
+				InputStream inputStream = null;
+				Part filePart = request.getPart("image");
+				String imageId = request.getParameter("imageId");
+				if(filePart!=null) {
+					inputStream = filePart.getInputStream();
+				}
 				
+				ImageModel im = new ImageModel();
+				if(inputStream!=null) {
+					im.setImage(inputStream);
+					im.setUserId(userId);
+				}
+				
+				
+				rs.updateImage(im,imageId);
 				rs.updateData(um,userId);
-				request.getRequestDispatcher("/home.jsp").forward(request, response);
+				response.sendRedirect(request.getContextPath() + "/AdminDataServlet");
 			}
 			
-//			Insertion of all the data
-			
-			if(button.equals("insert")) {
+			if(button.equals("logout")) {
+				session.invalidate();
 				
-				
-				String userId = request.getParameter("userId");
-				String firstName = request.getParameter("firstName");
-				String lastName = request.getParameter("lastName");
-				String dateOfBirth = request.getParameter("dateOfBirth");
-				String emailId = request.getParameter("emailId");
-				String password = request.getParameter("password");
-				String gender = request.getParameter("gender");
-				String contactNo = request.getParameter("contactNo");
-				String languages[] = request.getParameterValues("languages");
-				
-				String[] street1 = request.getParameterValues("street1");
-				String[] street2 = request.getParameterValues("street2");
-				String[] pincode = request.getParameterValues("pincode");
-				String[] city = request.getParameterValues("city");
-				String[] state = request.getParameterValues("state");
-				String[] country = request.getParameterValues("country");
-				
-				
-				UserModel um = new UserModel();
-				List<AddressModel> am = new ArrayList<AddressModel>();
-				AddressModelList aml = new AddressModelList();
-				
-//				Set input data to model(POJO)
-				
-				um.setUserId(userId);
-				um.setFirstName(firstName);
-				um.setLastName(lastName);
-				um.setDateOfBirth(dateOfBirth);
-				um.setEmailId(emailId);
-				um.setPassword(password);
-				um.setGender(gender);
-				um.setContactNo(contactNo);
-				String lang = "";
-				int i = 0;
-				while (i < languages.length) {
-					lang = languages[i] + " " + lang;
-					i++;
-				}
-				um.setLanguages(lang);
-				
-				for(int temp=0;temp<street1.length;temp++)
-				{
-					am.add(new AddressModel(null, null, street1[temp],street2[temp], pincode[temp], city[temp], state[temp], country[temp]));
-				}
-				aml.setAddressModelList(am);
-				
-//				pass model(POJO) to service method
-				
-				RegisterationService rs = new RegstrationServiceImpl();
-				rs.insertData(um,aml);
-				
-//				appropriate jsp page calling
-				
-				request.getRequestDispatcher("/index.jsp").forward(request, response);
+				response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
+		        response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+		        response.setDateHeader("Expires", 0);
+		        
+				/*
+				 * response.setContentType("text/html"); PrintWriter out = response.getWriter();
+				 * out.println("<script type=\"text/javascript\">");
+				 * out.println("alert('Logged out successful...');"); out.println("</script>");
+				 */
+		        
+	        	request.setAttribute("error", "Logged out successfully");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
+				requestDispatcher.include(request, response);
+				System.out.println("Logged out");
 			}
+		}
+		if(button.equals("insert")) {
+			
+			
+			String userId = request.getParameter("userId");
+			String firstName = request.getParameter("firstName");
+			String lastName = request.getParameter("lastName");
+			String dateOfBirth = request.getParameter("dateOfBirth");
+			String emailId = request.getParameter("emailId");
+			String password = request.getParameter("password");
+			String gender = request.getParameter("gender");
+			String contactNo = request.getParameter("contactNo");
+			String languages[] = request.getParameterValues("languages");
+			
+			String[] street1 = request.getParameterValues("street1");
+			String[] street2 = request.getParameterValues("street2");
+			String[] pincode = request.getParameterValues("pincode");
+			String[] city = request.getParameterValues("city");
+			String[] state = request.getParameterValues("state");
+			String[] country = request.getParameterValues("country");
+			
+			InputStream inputStream = null;
+			Part filePart = request.getPart("image");
+			if(filePart!=null) {
+				inputStream = filePart.getInputStream();
+			}
+			
+			
+			UserModel um = new UserModel();
+			List<AddressModel> am = new ArrayList<AddressModel>();
+			AddressModelList aml = new AddressModelList();
+			ImageModel im = new ImageModel();
+//			Set input data to model(POJO)
+			
+			um.setUserId(userId);
+			um.setFirstName(firstName);
+			um.setLastName(lastName);
+			um.setDateOfBirth(dateOfBirth);
+			um.setEmailId(emailId);
+			um.setPassword(password);
+			um.setGender(gender);
+			um.setContactNo(contactNo);
+			String lang = "";
+			int i = 0;
+			while (i < languages.length) {
+				lang = languages[i] + "," + lang;
+				i++;
+			}
+			um.setLanguages(lang);
+			
+			if(inputStream!=null) {
+				im.setImage(inputStream);
+			}
+			
+			
+			for(int temp=0;temp<street1.length;temp++)
+			{
+				am.add(new AddressModel(null, null, street1[temp],street2[temp], pincode[temp], city[temp], state[temp], country[temp]));
+			}
+			aml.setAddressModelList(am);
+			
+//			pass model(POJO) to service method
+			
+			RegisterationService rs = new RegstrationServiceImpl();
+			int data = rs.insertData(um,im,aml);
+			
+			if(data!=0) {
+	        	request.setAttribute("error", "Registration Successfully Completed");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
+				requestDispatcher.include(request, response);
+			}
+			else {
+	        	request.setAttribute("error", "Registration failed");
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
+				requestDispatcher.include(request, response);
+			}
+			
+//			appropriate jsp page calling
+			
+			request.getRequestDispatcher("/index.jsp").forward(request, response);
+		}
+		if(button.equals("forgot")) {
+			AdminDataService ad = new AdminDataServiceImpl();
+			String emailId = request.getParameter("emailId");
+			UserModel um = new UserModel();
+			um.setEmailId(emailId);
+			List<UserModel> forgotData = ad.forgotData(emailId);
+			response.setContentType("text/html");
+			PrintWriter pw=response.getWriter();
+			pw.println("<script type=\"text/javascript\">");
+			pw.println("alert('Password is "+forgotData.get(0).getPassword()+"' );");
+			pw.println("</script>");
+			RequestDispatcher rd=request.getRequestDispatcher("index.jsp");
+			rd.include(request, response);
+
 		}
 	}
 	
@@ -269,22 +354,17 @@ public class RegistrationServlet extends HttpServlet {
 		
 		ArrayList<UserModel> userList = new ArrayList<>();
 		List<AddressModel> addressData = new ArrayList<>();
+		List<ImageModel> imageData = new ArrayList<>();
+		ImageModel im = new ImageModel();
 		
 		UserModel um = new UserModel();
-		AddressModel am = new AddressModel("", "", "", "", "", "", "", "");
-		am.setStreet1("");
-		um.setUserId("");
-		um.setFirstName("");
-		um.setLastName("");
-		um.setDateOfBirth("");
-		um.setEmailId("");
-		um.setPassword("");
-		um.setGender("");
-		um.setContactNo("");
-		um.setLanguages("");
+		AddressModel am = new AddressModel();
 
+		
 		addressData.add(am);
 		userList.add(um);
+		imageData.add(im);
+		request.setAttribute("imageData", imageData);
 		request.setAttribute("data", userList);
 		request.setAttribute("addressData", addressData);
 		request.getRequestDispatcher("/register.jsp").forward(request, response);

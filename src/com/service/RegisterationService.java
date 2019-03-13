@@ -2,11 +2,12 @@ package com.service;
 
 import com.model.AddressModel;
 import com.model.AddressModelList;
+import com.model.ImageModel;
 import com.model.UserModel;
 
 public interface RegisterationService {
 
-	void insertData(UserModel um, AddressModelList aml);
+	int insertData(UserModel um, ImageModel im, AddressModelList aml);
 
 	void updateData(UserModel um, String id);
 
@@ -15,6 +16,8 @@ public interface RegisterationService {
 	void updateAddress(AddressModel am, String addressId);
 
 	void deleteAddress(String id);
+
+	void updateImage(ImageModel im, String imageId);
 
 	
 }

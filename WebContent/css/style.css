@@ -5,3 +5,90 @@ textarea {
 p{
 	color: red;
 }
+
+.thumbnail{
+	height: 200px;
+	width: 200px;
+}
+
+.head button{
+	float: right;
+	margin-top: 35px;
+}
+
+.head button.cancel{
+	float: left;
+	margin-top: 25px;
+}
+
+.head h1{
+	text-align: center;
+}
+
+.logoHeader img {
+	height: 200px;
+	width: 300px;
+}
+
+
+
+.footer {
+	position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f1f1f1;
+  overflow: hidden;
+  z-index: 10;
+}
+.footer p {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+
+
+
+
+
+
+.header {
+  overflow: hidden;
+  background-color: #f1f1f1;
+  padding: 20px 10px;
+}
+
+.header a {
+  float: left;
+  color: black;
+  text-align: center;
+  padding: 12px;
+  text-decoration: none;
+  font-size: 18px; 
+  line-height: 25px;
+  border-radius: 4px;
+}
+
+.header a.logo {
+  font-size: 25px;
+  font-weight: bold;
+  
+}
+.header a.logo img{
+	height: 50px;
+  width: 200px;
+}
+.header-right {
+  float: right;
+}
+.header-right button{
+  margin-top: 15px;
+}
+
+.close {display: none;}

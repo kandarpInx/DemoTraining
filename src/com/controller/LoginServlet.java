@@ -42,8 +42,7 @@ public class LoginServlet extends HttpServlet {
 			HttpSession session = request.getSession(); // creation
 			session.setAttribute("userDetails", userDetails);
 			session.setMaxInactiveInterval(5*60); // timeout
-			
-			request.getRequestDispatcher("/home.jsp").forward(request, response);
+			response.sendRedirect(request.getContextPath() + "/AdminDataServlet");
 		}
 		else {
 			String a = (String) request.getAttribute("error");
@@ -53,5 +52,4 @@ public class LoginServlet extends HttpServlet {
 			request.getRequestDispatcher("/index.jsp").forward(request, response);
 		}		
 	}
-
 }

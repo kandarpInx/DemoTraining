@@ -1,16 +1,21 @@
 package com.dao.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import com.DBConnection.DatabaseConnection;
 import com.dao.DataRetriveDAO;
 import com.model.AddressModel;
 import com.model.AddressModelList;
+import com.model.ImageModel;
 import com.model.UserModel;
 
 public class DataRetriveDAOImpl implements DataRetriveDAO {
@@ -36,7 +41,8 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 				usm.setContactNo(rs.getString("contactNo"));
 				usm.setLanguages(rs.getString("languages"));
 				usm.setPassword(rs.getString("password"));
-	        
+				usm.setRole(rs.getString("role"));
+				
 				userList.add(usm);
 			}
 	   
@@ -97,5 +103,73 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 		}
 		
 		return am;
+	}
+
+	@Override
+	public List<ImageModel> retriveImageData(String sql) throws Exception {
+		Connection con = null;
+		con = DatabaseConnection.createConnection();
+		List<ImageModel> im = new ArrayList<ImageModel>();
+		ImageModel img = new ImageModel();
+		try {
+			PreparedStatement p = con.prepareStatement(sql);
+			ResultSet rs = p.executeQuery();
+			
+			while(rs.next())
+			{
+				String userId = rs.getString("userId");
+				String imageId = rs.getString("imageId");
+				Blob blob = rs.getBlob("image");
+				 
+				InputStream inputStream = blob.getBinaryStream();
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				byte[] buffer = new byte[4096];
+				int bytesRead = -1;
+				 
+				while ((bytesRead = inputStream.read(buffer)) != -1) {
+				    outputStream.write(buffer, 0, bytesRead);
+				}
+				 
+				byte[] imageBytes = outputStream.toByteArray();
+				 
+				String image = Base64.getEncoder().encodeToString(imageBytes);
+				 
+				inputStream.close();
+				outputStream.close();
+				
+				img.setUserId(userId);
+				img.setImageId(imageId);
+				img.setImageString(image);
+				
+				im.add(img);
+			}
+			
+			
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return im;
+	}
+
+	@Override
+	public int existedEmail(String sql) {
+		
+		Connection con = null;
+		con = DatabaseConnection.createConnection();
+		int count=0;
+		try {
+			PreparedStatement p = con.prepareStatement(sql);
+			ResultSet rs = p.executeQuery();
+			while(rs.next()) {
+				count = rs.getInt("rowcount");
+			}
+		}
+		catch(SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return count;
 	}
 }

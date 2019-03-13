@@ -4,33 +4,36 @@ import com.dao.RegisterationDAO;
 import com.dao.impl.RegisterationDAOImpl;
 import com.model.AddressModel;
 import com.model.AddressModelList;
+import com.model.ImageModel;
 import com.model.UserModel;
 import com.service.RegisterationService;
 
 public class RegstrationServiceImpl implements RegisterationService {
 
 	@Override
-	public void insertData(UserModel um, AddressModelList aml) {
+	public int insertData(UserModel um, ImageModel im, AddressModelList aml) {
 		
 		String sql = "INSERT INTO user VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		
 		RegisterationDAO rg = new RegisterationDAOImpl();
-		int data = rg.insertData(um, aml, sql);
+		int data = rg.insertData(um, im, aml, sql);
 		
 		System.out.println(data);
 		if(data!=0) {
-			System.out.println("Success user..");
+			System.out.println("Successfully inserted user details..");
 		}
 		else {
-			System.out.println("Failed user...");
+			System.out.println("Failed to insert user details...");
 		}
+		
+		return data;
 
 	}
 
 	@Override
 	public void updateData(UserModel um, String id) {
 		
-		String sql = "update user set firstName=?,lastName=?,dateOfBirth=?,emailId=?,gender=?,contactNo=?,languages=?,password=? where userId="+id;
+		String sql = "update user set firstName=?,lastName=?,dateOfBirth=?,emailId=?,gender=?,contactNo=?,languages=? where userId="+id;
 		
 		RegisterationDAO rg = new RegisterationDAOImpl();
 		int data = rg.updateData(um, sql);
@@ -79,6 +82,22 @@ public class RegstrationServiceImpl implements RegisterationService {
 		}
 		else {
 			System.out.println("Error in deleting user data..");
+		}
+	}
+
+	@Override
+	public void updateImage(ImageModel im, String imageId) {
+		// TODO Auto-generated method stub
+		String sql = "update image set image=? where imageId = "+imageId;
+		
+		RegisterationDAO rg = new RegisterationDAOImpl();
+		int msg = rg.updateImageData(im, sql);
+		
+		if(msg!=0) {
+			System.out.println("Update operation on image id "+imageId+" completed successfully..");
+		}
+		else {
+			System.out.println("Error in updating image data...");
 		}
 	}
 }

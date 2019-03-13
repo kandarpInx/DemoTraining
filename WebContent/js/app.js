@@ -1,11 +1,11 @@
 var template = $('#sections .section:first').clone();
 
-var sectionsCount = 1;
+var sectionsCount = str;
 
 $('body').on('click', '.addsection', function() {
     sectionsCount++;
-    var section = template.clone().find(':input').each(function(){
-        var newId = this.name+'_' + sectionsCount;
+    var section = template.clone().find(':input,p').each(function(){
+        var newId = $(this).attr('name') + '_generated' +'_' + sectionsCount;
         $(this).val("").prev().attr('for', newId);
         this.id = newId;
 	}).end()
@@ -15,11 +15,18 @@ $('body').on('click', '.addsection', function() {
     return false;
 });
 $('.section, #limit').on('click', '.remove', function() {
+	if(sectionsCount > 1 ){
 		$(this).parent().fadeOut(800, function() {
 			$(this).parent().parent().empty();
 			return false;
 		});
+		sectionsCount--;
+	}
+	else{
+		alert("Can not remove all the addresses...!");
+	}
 	return false;
+	
 });
 
 
