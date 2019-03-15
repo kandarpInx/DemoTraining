@@ -14,19 +14,24 @@ import java.util.List;
 import com.DBConnection.DatabaseConnection;
 import com.dao.DataRetriveDAO;
 import com.model.AddressModel;
-import com.model.AddressModelList;
 import com.model.ImageModel;
 import com.model.UserModel;
 
 public class DataRetriveDAOImpl implements DataRetriveDAO {
 
 	public ArrayList<UserModel> retriveData(String sql) throws ClassNotFoundException {
+		
+		Connection con = null;
+		PreparedStatement p = null;
+		ResultSet rs = null;
+		
 		ArrayList<UserModel> userList = new ArrayList<>();
+		
 		try {
-			Connection con = null;
+			
 			con = DatabaseConnection.createConnection();
-			PreparedStatement p = con.prepareStatement(sql);
-			ResultSet rs = p.executeQuery();
+			p = con.prepareStatement(sql);
+			rs = p.executeQuery();
 			
 			while(rs.next())
 			{
@@ -50,22 +55,57 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 		catch(SQLException e) {
 			e.printStackTrace();
 		}
+		finally {
+			if(rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(p!=null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con !=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		   }
 		 return userList;
 	}
 
 	@Override
 	public int removeData(String sql) {
+		Connection con = null;
+		PreparedStatement p = null;
+		
 		int i=0;
 		try {
-			Connection con = null;
 			con = DatabaseConnection.createConnection();
-			PreparedStatement p = con.prepareStatement(sql);
+			p = con.prepareStatement(sql);
 			i = p.executeUpdate();
 			
 		}
 		catch (SQLException e) {
 			e.printStackTrace();
-		}
+		}finally {
+			if(p!=null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con !=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		   }
 		return i;
 	}
 
@@ -73,12 +113,15 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 	public List<AddressModel> retriveAddressData(String sql) {
 		
 		Connection con = null;
-		con = DatabaseConnection.createConnection();
+		PreparedStatement p = null;
+		ResultSet rs = null;
+		
 		List<AddressModel> am = new ArrayList<AddressModel>();
-		AddressModelList aml = new AddressModelList();
+		
 		try {
-			PreparedStatement p = con.prepareStatement(sql);
-			ResultSet rs = p.executeQuery();
+			con = DatabaseConnection.createConnection();
+			p = con.prepareStatement(sql);
+			rs = p.executeQuery();
 			
 			String addressId, userId, street1, street2, pincode, city, state, country;
 			
@@ -95,12 +138,30 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 				
 				am.add(new AddressModel(addressId, userId, street1, street2, pincode, city, state, country));
 			}
-			aml.setAddressModelList(am);
 			
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-		}
+		}finally {
+			if(rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(p!=null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con !=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		   }
 		
 		return am;
 	}
@@ -108,12 +169,14 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 	@Override
 	public List<ImageModel> retriveImageData(String sql) throws Exception {
 		Connection con = null;
-		con = DatabaseConnection.createConnection();
+		PreparedStatement p = null;
+		ResultSet rs = null;
 		List<ImageModel> im = new ArrayList<ImageModel>();
 		ImageModel img = new ImageModel();
 		try {
-			PreparedStatement p = con.prepareStatement(sql);
-			ResultSet rs = p.executeQuery();
+			con = DatabaseConnection.createConnection();
+			p = con.prepareStatement(sql);
+			rs = p.executeQuery();
 			
 			while(rs.next())
 			{
@@ -148,7 +211,26 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-		}
+		}finally {
+			if(rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(p!=null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con !=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		   }
 		
 		return im;
 	}
@@ -157,18 +239,41 @@ public class DataRetriveDAOImpl implements DataRetriveDAO {
 	public int existedEmail(String sql) {
 		
 		Connection con = null;
-		con = DatabaseConnection.createConnection();
+		PreparedStatement p = null;
+		ResultSet rs = null;
+		
+		
 		int count=0;
 		try {
-			PreparedStatement p = con.prepareStatement(sql);
-			ResultSet rs = p.executeQuery();
+			con = DatabaseConnection.createConnection();
+			p = con.prepareStatement(sql);
+			rs = p.executeQuery();
 			while(rs.next()) {
 				count = rs.getInt("rowcount");
 			}
 		}
 		catch(SQLException e) {
 			e.printStackTrace();
-		}
+		}finally {
+			if(rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(p!=null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con !=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		   }
 		
 		return count;
 	}

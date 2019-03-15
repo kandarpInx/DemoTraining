@@ -17,11 +17,15 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 
 	@Override
 	public int insertData(UserModel um, ImageModel im, AddressModelList aml, String sql) {
+		Connection con = null;
+		PreparedStatement p = null,ps = null;
+		ResultSet rs = null;
+		
 		int i=0;
 		try {
-			Connection con = null;
+			
 			con = DatabaseConnection.createConnection();
-			PreparedStatement p = con.prepareStatement(sql);
+			p = con.prepareStatement(sql);
 			
 			p.setString(1, null);
 			p.setString(2, um.getFirstName());
@@ -38,33 +42,61 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 			
 			String s1 = "select * from user where emailId='"+um.getEmailId()+"'";
 			
-			PreparedStatement ps = con.prepareStatement(s1);
-			ResultSet rs = ps.executeQuery();
+			ps = con.prepareStatement(s1);
+			rs = ps.executeQuery();
 			
 			if(rs.next()) {
 				String userId = rs.getString("userId");
 				insertAddresses(aml,userId);
 				insertImage(im,userId);
 			}
-			
-			con.close();
-			System.out.println("user reg closed");
 		}
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}finally {
+			if (p != null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if(ps!=null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if(con !=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		   }
 		return i;
 	}
 
 	private void insertImage(ImageModel im, String userId) {
 		
+		Connection con = null;
+		PreparedStatement p = null;
+		
 		String sql = "INSERT INTO image VALUES(?,?,?)";
 		
 		try {
-			Connection con = null;
+			
 			con = DatabaseConnection.createConnection();
-			PreparedStatement p = con.prepareStatement(sql);
+			p = con.prepareStatement(sql);
 			
 			p.setString(1, null);
 			p.setString(2, userId);
@@ -73,8 +105,20 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 			p.executeUpdate();
 		}
 		catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			if (p != null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con!=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
 		
 	}
@@ -82,6 +126,8 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 	public void insertAddresses(AddressModelList aml, String userId) {
 		
 		Connection con = null;
+		PreparedStatement p = null;
+		
 		con = DatabaseConnection.createConnection();
 		List<AddressModel> am = aml.getAddressModelList();
 		String sql = "INSERT INTO address VALUES(?,?,?,?,?,?,?,?)";
@@ -90,7 +136,7 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 
 			try {
 
-				PreparedStatement p = con.prepareStatement(sql);
+				p = con.prepareStatement(sql);
 
 				p.setString(1, null);
 				p.setString(2, userId);
@@ -105,6 +151,19 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 			} 
 			catch (SQLException e) {
 				e.printStackTrace();
+			}finally {
+				if (p != null)
+					try {
+						p.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				if(con!=null)
+					try {
+						con.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
 			}
 
 		}
@@ -112,11 +171,12 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 
 	@Override
 	public int updateData(UserModel um, String sql) {
+		Connection con = null;
+		PreparedStatement p = null;
 		int i=0;
 		try {
-			Connection con = null;
 			con = DatabaseConnection.createConnection();
-			PreparedStatement p = con.prepareStatement(sql);
+			p = con.prepareStatement(sql);
 			
 			p.setString(1, um.getFirstName());
 			p.setString(2, um.getLastName());
@@ -132,6 +192,19 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 		catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			if (p != null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con!=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
 		return i;
 	}
@@ -141,10 +214,13 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 		// TODO Auto-generated method stub
 		
 		Connection con = null;
-		con = DatabaseConnection.createConnection();
+		PreparedStatement p = null;
+		
 		int i=0;
 		try {
-			PreparedStatement p = con.prepareStatement(sql);
+			con = DatabaseConnection.createConnection();
+			p = con.prepareStatement(sql);
+			
 			p.setString(1, am.getStreet1());
 			p.setString(2, am.getStreet2());
 			p.setString(3, am.getPincode());
@@ -156,35 +232,33 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 		} 
 		catch (SQLException e) {
 			e.printStackTrace();
+		}finally {
+			if (p != null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con!=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
 		
 		return i;
 		
-	}
-
-	@Override
-	public int removeAddressData(String sql) {
-		int i=0;
-		try {
-			Connection con = null;
-			con = DatabaseConnection.createConnection();
-			PreparedStatement p = con.prepareStatement(sql);
-			i = p.executeUpdate();
-			
-		}
-		catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return i;
 	}
 
 	@Override
 	public int updateImageData(ImageModel im, String sql) {
 		Connection con = null;
+		PreparedStatement p = null;
 		con = DatabaseConnection.createConnection();
 		int i=0;
 		try {
-			PreparedStatement p = con.prepareStatement(sql);
+			p = con.prepareStatement(sql);
 			p.setBlob(1, im.getImage());
 
 			i = p.executeUpdate();
@@ -192,7 +266,20 @@ public class RegisterationDAOImpl implements RegisterationDAO {
 		catch (SQLException e) {
 			e.printStackTrace();
 		}
-		
+		finally {
+			if (p != null)
+				try {
+					p.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if(con!=null)
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
 		return i;
 	}
 }

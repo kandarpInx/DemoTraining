@@ -1,6 +1,8 @@
 package com.service.impl;
 
+import com.dao.DataRetriveDAO;
 import com.dao.RegisterationDAO;
+import com.dao.impl.DataRetriveDAOImpl;
 import com.dao.impl.RegisterationDAOImpl;
 import com.model.AddressModel;
 import com.model.AddressModelList;
@@ -74,8 +76,8 @@ public class RegstrationServiceImpl implements RegisterationService {
 	public void deleteAddress(String id) {
 		// TODO Auto-generated method stub
 		String sql = "delete from address where addressId = '"+id+"'";
-		RegisterationDAO rg = new RegisterationDAOImpl();
-		int msg = rg.removeAddressData(sql);
+		DataRetriveDAO drd = new DataRetriveDAOImpl();
+		int msg = drd.removeData(sql);
 		
 		if(msg!=0) {
 			System.out.println("Delete address on address id "+id+" successfully...");

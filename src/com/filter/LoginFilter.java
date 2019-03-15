@@ -23,10 +23,13 @@ public class LoginFilter implements Filter {
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
-
+	
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
+		
+		assert res instanceof HttpServletResponse : res.getClass();
 		HttpServletResponse response = (HttpServletResponse) res;
-		HttpServletRequest request = (HttpServletRequest) req;
+		assert req instanceof HttpServletRequest : req.getClass();
+		HttpServletRequest request =  (HttpServletRequest) req;
 		
 		HttpSession session = request.getSession(false);
         String loginURI = request.getContextPath() + "/LoginServlet";

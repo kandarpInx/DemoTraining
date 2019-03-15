@@ -335,8 +335,6 @@ public class RegistrationServlet extends HttpServlet {
 		if(button.equals("forgot")) {
 			AdminDataService ad = new AdminDataServiceImpl();
 			String emailId = request.getParameter("emailId");
-			UserModel um = new UserModel();
-			um.setEmailId(emailId);
 			List<UserModel> forgotData = ad.forgotData(emailId);
 			response.setContentType("text/html");
 			PrintWriter pw=response.getWriter();

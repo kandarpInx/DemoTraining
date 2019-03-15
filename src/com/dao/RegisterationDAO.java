@@ -15,8 +15,6 @@ public interface RegisterationDAO {
 
 	int updateAddressData(AddressModel am, String sql);
 
-	int removeAddressData(String sql);
-
 	int updateImageData(ImageModel im, String sql);
 
 	//int insAddrData(UserModel um, AddressModel am, String sql);

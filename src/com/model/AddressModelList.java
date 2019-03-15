@@ -10,8 +10,8 @@ public class AddressModelList {
 		return AddressModelList;
 	}
 
-	public void setAddressModelList(List<AddressModel> addressModelList) {
-		AddressModelList = addressModelList;
+	public void setAddressModelList(List<AddressModel> AddressModelList) {
+		this.AddressModelList = AddressModelList;
 	}
 	
 	
